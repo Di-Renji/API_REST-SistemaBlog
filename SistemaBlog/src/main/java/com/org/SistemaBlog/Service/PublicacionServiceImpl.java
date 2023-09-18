@@ -5,6 +5,9 @@ import com.org.SistemaBlog.entity.Publicacion;
 import com.org.SistemaBlog.exception.ResourceNotFoundException;
 import com.org.SistemaBlog.repository.PublicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,10 +29,20 @@ public class PublicacionServiceImpl implements PublicacionService {
     }
 
     @Override
-    public List<PublicacionDTO> obtenerTodasLasPublicaciones() {
+    public List<PublicacionDTO> obtenerTodasLasPublicaciones(int numeroPagina, int medidaPagina) {
+        Pageable pageable = PageRequest.of(numeroPagina, medidaPagina);
+        Page<Publicacion> publicacions = publicacionRepository.findAll(pageable);
+        List<Publicacion> listaDePublicaciones= publicacions.getContent();
+        return listaDePublicaciones.stream().map(publicacion -> mapearDTO(publicacion)).collect(Collectors.toList());
+    }
+
+    // Para Obtener todas las publicaciones sin paginacion
+    /*
+    * public List<PublicacionDTO> obtenerTodasLasPublicaciones() {
         List<Publicacion> publicaciones= publicacionRepository.findAll();
         return publicaciones.stream().map(publicacion -> mapearDTO(publicacion)).collect(Collectors.toList());
     }
+    * */
 
     @Override
     public PublicacionDTO obtenerPublicacionPorID(long id) {

@@ -22,9 +22,19 @@ public class PublicacionController {
     }
 
     @GetMapping
+    public List<PublicacionDTO> listarPublicaciones(
+            @RequestParam(value = "pageNo", defaultValue = "0", required = false) int numeroPagina,
+            @RequestParam(value = "pageSize", defaultValue = "10", required = false) int medidaPagina){
+        return publicacionService.obtenerTodasLasPublicaciones(numeroPagina, medidaPagina);
+    }
+
+    // Para Obtener todas las publicaciones sin Paginacion
+    /*
+    * @GetMapping
     public List<PublicacionDTO> listarPublicaciones(){
         return publicacionService.obtenerTodasLasPublicaciones();
     }
+    * */
 
     @GetMapping("/{id}")
     public ResponseEntity<PublicacionDTO> obtenerPublicacionPorId(@PathVariable(name = "id") long id){
