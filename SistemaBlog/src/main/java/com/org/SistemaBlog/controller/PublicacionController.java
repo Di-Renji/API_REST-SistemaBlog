@@ -2,6 +2,7 @@ package com.org.SistemaBlog.controller;
 
 import com.org.SistemaBlog.Service.PublicacionService;
 import com.org.SistemaBlog.dto.PublicacionDTO;
+import com.org.SistemaBlog.dto.PublicacionRespuesta;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,20 +22,17 @@ public class PublicacionController {
         return new ResponseEntity<>(publicacionService.crearPublicacion(publicacionDTO), HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public List<PublicacionDTO> listarPublicaciones(
+    @GetMapping("/page")
+    public PublicacionRespuesta listarPublicacionesConPaginacion(
             @RequestParam(value = "pageNo", defaultValue = "0", required = false) int numeroPagina,
             @RequestParam(value = "pageSize", defaultValue = "10", required = false) int medidaPagina){
-        return publicacionService.obtenerTodasLasPublicaciones(numeroPagina, medidaPagina);
+        return publicacionService.obtenerPublicacionesConPaginacion(numeroPagina, medidaPagina);
     }
 
-    // Para Obtener todas las publicaciones sin Paginacion
-    /*
-    * @GetMapping
+    @GetMapping()
     public List<PublicacionDTO> listarPublicaciones(){
         return publicacionService.obtenerTodasLasPublicaciones();
     }
-    * */
 
     @GetMapping("/{id}")
     public ResponseEntity<PublicacionDTO> obtenerPublicacionPorId(@PathVariable(name = "id") long id){

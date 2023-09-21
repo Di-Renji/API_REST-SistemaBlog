@@ -1,6 +1,7 @@
 package com.org.SistemaBlog.Service;
 
 import com.org.SistemaBlog.dto.PublicacionDTO;
+import com.org.SistemaBlog.dto.PublicacionRespuesta;
 import com.org.SistemaBlog.entity.Publicacion;
 import com.org.SistemaBlog.exception.ResourceNotFoundException;
 import com.org.SistemaBlog.repository.PublicacionRepository;
@@ -29,20 +30,29 @@ public class PublicacionServiceImpl implements PublicacionService {
     }
 
     @Override
-    public List<PublicacionDTO> obtenerTodasLasPublicaciones(int numeroPagina, int medidaPagina) {
-        Pageable pageable = PageRequest.of(numeroPagina, medidaPagina);
-        Page<Publicacion> publicacions = publicacionRepository.findAll(pageable);
-        List<Publicacion> listaDePublicaciones= publicacions.getContent();
-        return listaDePublicaciones.stream().map(publicacion -> mapearDTO(publicacion)).collect(Collectors.toList());
-    }
-
-    // Para Obtener todas las publicaciones sin paginacion
-    /*
-    * public List<PublicacionDTO> obtenerTodasLasPublicaciones() {
+    public List<PublicacionDTO> obtenerTodasLasPublicaciones() {
         List<Publicacion> publicaciones= publicacionRepository.findAll();
         return publicaciones.stream().map(publicacion -> mapearDTO(publicacion)).collect(Collectors.toList());
     }
-    * */
+
+    @Override
+    public PublicacionRespuesta obtenerPublicacionesConPaginacion(int numeroPagina, int medidaPagina) {
+        Pageable pageable = PageRequest.of(numeroPagina, medidaPagina);
+        Page<Publicacion> publicacions = publicacionRepository.findAll(pageable);
+        List<Publicacion> listaDePublicaciones= publicacions.getContent();
+        List<PublicacionDTO> contenido = listaDePublicaciones.stream().map(publicacion -> mapearDTO(publicacion)).collect(Collectors.toList());
+
+        PublicacionRespuesta publicacionRespuesta = new PublicacionRespuesta();
+        publicacionRespuesta.setContenido(contenido);
+        publicacionRespuesta.setNumeroPagina(publicacions.getNumber());
+        publicacionRespuesta.setMedidaPagina(publicacions.getSize());
+        publicacionRespuesta.setTotalElementos(publicacions.getTotalElements());
+        publicacionRespuesta.setTotalPaginas(publicacions.getTotalPages());
+        publicacionRespuesta.setUltima(publicacions.isLast());
+
+        return publicacionRespuesta;
+
+    }
 
     @Override
     public PublicacionDTO obtenerPublicacionPorID(long id) {
@@ -66,6 +76,9 @@ public class PublicacionServiceImpl implements PublicacionService {
         publicacionRepository.delete(publicacion);
     }
 
+
+
+    // ***************** UTILIDADES START ***********************
     // Convierte Entidad a DTO
     private PublicacionDTO mapearDTO(Publicacion publicacion){
         PublicacionDTO publicacionDTO = new PublicacionDTO();
@@ -84,5 +97,6 @@ public class PublicacionServiceImpl implements PublicacionService {
         publicacion.setContenido(publicacionDTO.getContenido());
         return publicacion;
     }
+    // ***************** UTILIDADES END ***********************
 
 }
