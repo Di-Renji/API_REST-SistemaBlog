@@ -5,11 +5,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tbl_publicacion", uniqueConstraints = {@UniqueConstraint(columnNames = "titulo")})
+@Table(name = "tbl_publicacion", uniqueConstraints = {@UniqueConstraint(columnNames = "titulo")}) // no puede haber titulos repetidos
 public class Publicacion {
 
     @Id
@@ -24,5 +27,8 @@ public class Publicacion {
 
     @Column(name = "contenido", nullable = false)
     private String contenido;
+
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Comentario> comentarios = new HashSet<>();
 
 }

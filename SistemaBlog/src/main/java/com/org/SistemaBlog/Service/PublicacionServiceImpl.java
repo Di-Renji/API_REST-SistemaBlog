@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.lang.module.ResolutionException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,22 +22,21 @@ public class PublicacionServiceImpl implements PublicacionService {
     private PublicacionRepository publicacionRepository;
 
     @Override
-    public PublicacionDTO crearPublicacion(PublicacionDTO publicacionDTO) {
+    public PublicacionDTO registrar(PublicacionDTO publicacionDTO) {
         Publicacion publicacion = mapearEntidad(publicacionDTO);
-        Publicacion nuevaPublicacion = publicacionRepository.save(publicacion);
-        PublicacionDTO publicacionRespuesta = mapearDTO(nuevaPublicacion);
+        Publicacion publicacionRegistrada = publicacionRepository.save(publicacion);
+        PublicacionDTO publicacionRespuesta = mapearDTO(publicacionRegistrada);
         return publicacionRespuesta;
-
     }
 
     @Override
-    public List<PublicacionDTO> obtenerTodasLasPublicaciones() {
+    public List<PublicacionDTO> listar() {
         List<Publicacion> publicaciones= publicacionRepository.findAll();
         return publicaciones.stream().map(publicacion -> mapearDTO(publicacion)).collect(Collectors.toList());
     }
 
     @Override
-    public PublicacionRespuesta obtenerPublicacionesConPaginacion(int numeroPagina, int medidaPagina) {
+    public PublicacionRespuesta listarConPaginacion(int numeroPagina, int medidaPagina) {
         Pageable pageable = PageRequest.of(numeroPagina, medidaPagina);
         Page<Publicacion> publicacions = publicacionRepository.findAll(pageable);
         List<Publicacion> listaDePublicaciones= publicacions.getContent();
@@ -55,13 +55,13 @@ public class PublicacionServiceImpl implements PublicacionService {
     }
 
     @Override
-    public PublicacionDTO obtenerPublicacionPorID(long id) {
-        Publicacion publicacion = publicacionRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Publicacion","id", id));
+    public PublicacionDTO obtenerPorID(long id) {
+        Publicacion publicacion = publicacionRepository.findById(id).orElseThrow(()->new ResolutionException("Recurso No Encontrado"));
         return mapearDTO(publicacion);
     }
 
     @Override
-    public PublicacionDTO actualizarPublicacion(PublicacionDTO publicacionDTO, long id) {
+    public PublicacionDTO actualizar(PublicacionDTO publicacionDTO, long id) {
         Publicacion publicacion = publicacionRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Publicacion","id", id));
         publicacion.setTitulo(publicacionDTO.getTitulo());
         publicacion.setDescripcion(publicacionDTO.getDescripcion());
@@ -71,7 +71,7 @@ public class PublicacionServiceImpl implements PublicacionService {
     }
 
     @Override
-    public void eliminarPublicacion(long id) {
+    public void eliminar(long id) {
         Publicacion publicacion = publicacionRepository.findById(id).orElseThrow(()->new ResourceNotFoundException("Publicacion","id", id));
         publicacionRepository.delete(publicacion);
     }

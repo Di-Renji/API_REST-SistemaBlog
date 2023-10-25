@@ -7,14 +7,12 @@ import java.util.List;
 
 public interface PublicacionService {
 
-    public PublicacionDTO crearPublicacion(PublicacionDTO publicacionDTO);
-    public List<PublicacionDTO> obtenerTodasLasPublicaciones();
-    public PublicacionRespuesta obtenerPublicacionesConPaginacion(int numeroPagina, int medidaPagina);
-    public PublicacionDTO obtenerPublicacionPorID(long id);
-    public PublicacionDTO actualizarPublicacion(PublicacionDTO publicacionDTO, long id);
-    public void eliminarPublicacion(long id);
-
-    // public List<PublicacionDTO> obtenerPublicacionesConPaginacion(int numeroPagina, int medidaPagina);
+    PublicacionDTO registrar(PublicacionDTO publicacionDTO);
+    List<PublicacionDTO> listar();
+    PublicacionRespuesta listarConPaginacion(int numeroPagina, int medidaPagina);
+    PublicacionDTO obtenerPorID(long id);
+    PublicacionDTO actualizar(PublicacionDTO publicacionDTO, long id);
+    void eliminar(long id);
 
 }
 
